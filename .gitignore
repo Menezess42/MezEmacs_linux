@@ -1,0 +1,16 @@
+eshell/
+auto-save-list/
+eln-cache/
+elpa/
+elpy/
+org-persist/
+snippets/
+transient/
+server/
+etc/
+transient/
+url/
+var/
+.python_environments/
+recentf
+packages_list.txt

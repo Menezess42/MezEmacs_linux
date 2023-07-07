@@ -1,0 +1,771 @@
+#+title: MezEmacs configuration
+# #+PROPERTY: header-args:emacs-lisp :tangle "./init_test.el" :mkdirp [yes]
+* MezEmacs configuration
+** Startup configs
+- This is the basic config that everyone puts on emacs to make mor clear.
+#+begin_src emacs-lisp :tangle yes
+  (setq custom-file (concat user-emacs-directory "./configs/custom_2.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file))
+
+  (setq custom-config "./configs/custom_2.el")
+    (setq inhibit-startup-message t)
+    (setq visual-line-mode t)
+    (scroll-bar-mode -1)
+    (tool-bar-mode -1)
+    (tooltip-mode -1)
+    (set-fringe-mode 10)
+    (menu-bar-mode -1)
+    (setq visible-bell 1)
+    (global-display-line-numbers-mode)
+    (setq display-line-numbers-type 'relative)
+
+    (electric-pair-mode t)
+    (setq-default indent-tabs-mode nil)
+
+    (defalias 'yes-or-no-p 'y-or-n-p)
+
+    (prefer-coding-system 'utf-8)
+
+#+end_src
+- Font config
+  #+begin_src emacs-lisp :tangle yes
+    (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140)
+    (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 140)
+    (set-face-attribute 'variable-pitch nil :font "FiraCode Nerd Font" :height 140)
+  #+end_src
+** My TMNT(Teenage Mutant Ninja Turtles) color Theme:
+- The definiton of my TMNT color theme
+  #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/tmnt_theme_color_2.el" :mkdirp yes
+    ;; Set the color theme for the Teenage Mutant Ninja Turtles
+    (custom-set-faces
+     '(default ((t (:background "#2e2e2e" :foreground "#9966cc"))))
+     '(font-lock-comment-face ((t (:foreground "#b9b9b9"))))
+     '(font-lock-comment-delimiter-face ((t (:foreground "#b9b9b9"))))
+     '(font-lock-string-face ((t (:foreground "#e6a75e"))))
+     '(font-lock-function-name-face ((t (:foreground "#82b47d"))))
+     '(font-lock-variable-name-face ((t (:foreground "#6fb4d6"))))
+     '(font-lock-keyword-face ((t (:foreground "#b94d8b"))))
+     '(font-lock-type-face ((t (:foreground "#c3c080"))))
+     '(font-lock-constant-face ((t (:foreground "#e58d62"))))
+     '(font-lock-builtin-face ((t (:foreground "#e58d62"))))
+     `(flycheck-warning ((t (:underline (:style wave :color "#FFD300")))))
+     `(flycheck-error ((t (:underline (:style wave :color "#FF4500")))))
+     ;; `(region ((t (:background "#3d3d3d" :foreground "#FFFFFF"))))
+     ;; `(cursor ((t (:background "#FFFFFF"))))
+     `(line-number ((t (:foreground "#FFA500"))))
+     `(line-number-current-line ((t (:foreground "#00FF7F"
+                                                 :background "#1d1f21"))))
+     )
+
+    ;; make cursor blink
+    (defvar blink-cursor-colors (list  "#92c48f" "#6785c5" "#be369c" "#d9ca65")
+      "On each blink the cursor will cycle to the next color in this list.")
+
+    (setq blink-cursor-count 0)
+    (defun blink-cursor-timer-function ()
+      "Zarza wrote this cyberpunk variant of timer `blink-cursor-timer'. 
+        Warning: overwrites original version in `frame.el'.
+
+        This one changes the cursor color on each blink. Define colors in `blink-cursor-colors'."
+      (when (not (internal-show-cursor-p))
+        (when (>= blink-cursor-count (length blink-cursor-colors))
+          (setq blink-cursor-count 0))
+        (set-cursor-color (nth blink-cursor-count blink-cursor-colors))
+        (setq blink-cursor-count (+ 1 blink-cursor-count))
+        )
+      (internal-show-cursor nil (not (internal-show-cursor-p)))
+      )
+    ;; (global-hl-line-mode)
+    ;; (set-face-background 'hl-line "#301934")
+    (global-hl-line-mode)
+    (set-face-background 'hl-line "#301934")
+    (set-face-attribute 'hl-line nil :box '(:line-width 3 :color "purple"))
+    ;; Set background color for active modeline
+    (set-face-background 'mode-line "#301934")
+    ;; Set box attribute for active modeline
+    (set-face-attribute 'mode-line nil :box '(:line-width 3 :color "purple"))
+    ;; Set background color for inactive modeline
+    (set-face-background 'mode-line-inactive "#301934")
+    ;; Set box attribute for inactive modeline
+    (set-face-attribute 'mode-line-inactive nil :box '(:line-width 3 :color "purple"))
+
+    ;;; add purple border to the window
+    (set-face-attribute 'vertical-border nil :foreground "purple")
+    (set-face-attribute 'window-divider nil :foreground "purple" :background "purple")
+    (set-face-attribute 'window-divider-first-pixel nil :foreground "purple" :background "purple")
+    (set-face-attribute 'window-divider-last-pixel nil :foreground "purple" :background "purple")
+
+  #+end_src
+- Now we import to the config file
+  #+begin_src emacs-lisp :tangle yes
+    (load-file "~/.emacs.d/configs/tmnt_theme_color_2.el")
+  #+end_src
+** Config the repositorys for download the packages
+- List of repositorys that we take our packages, and the basic package to config all the other packages
+#+begin_src emacs-lisp :tangle yes
+  (require 'package)
+  (setq package-archive '(("melpa" . "https://melpa.org/packages/"
+                           )
+                          ("org" . "https://orgmode.org/elpa/")
+                          ("elpa" . "https://elpa.gnu.org/packages/")))
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+#+end_src
+** Config General:
+- General is a package that helps create and redefine keybinds
+  #+begin_src emacs-lisp :tangle yes
+    (use-package general
+      :config
+      (general-create-definer rune/leader-keys
+        :keymaps '(normal insert visual emacs)
+        :prefix "SPC"
+        :global-prefix "C-SPC")
+      (rune/leader-keys
+        "t" '(:ignore t :which-key "toggles")
+        ))
+  #+end_src
+** Config evil and the adjacent packages
+- Config evil and the adjacent packages:
+  - Evil:
+    - Is a package that brings Vi functionalities to emacs
+    #+begin_src emacs-lisp :tangle yes
+    (use-package evil
+        :demand t
+        :bind (("<escape>" . keyboard-escape-quit))
+        :init
+        (setq evil-want-keybinding nil)
+        :config
+        (evil-mode 1))
+    #+end_src
+  - Evil colection:
+    - Is a package to "upgrade" evil package that has alot of configs to popular packages
+      #+begin_src emacs-lisp :tangle yes
+        (use-package evil-collection
+        :after evil
+        :config
+        (setq evil-want-integration t)
+        (evil-collection-init))
+      #+end_src
+** config Company mode:
+- Company is an auto-complete packages that suggests completions based on the file and file type you are editing.
+  #+begin_src emacs-lisp :tangle yes
+(use-package company
+  :ensure t
+  :init (global-company-mode)
+  :config
+  (setq company-selection-wrap-around t)
+  (setq company-idle-delay 0.60)
+  (setq company-minimum-prefix-length 1)
+  (setq company-require-match nil)
+  (setq company-tooltip-align-annotations t)
+  (setq company-tooltip-flip-when-above t)
+  (setq company-tooltip-limit 10)
+  (setq company-tooltip-minimum-width 50)
+  (setq company-tooltip-minimum-height 10)
+  (setq company-dabbrev-downcase nil))
+
+(defun my-company-tab-or-complete ()
+  (interactive)
+  (if (eq last-command 'company-complete-selection)
+      (company-complete-selection)
+    (if (eq company-common (car company-candidates))
+        (company-complete-selection)
+      (company-select-next))))
+
+(defun my-company-backtab-or-complete ()
+  (interactive)
+  (if (eq last-command 'company-complete-selection)
+      (company-complete-selection)
+    (if (eq company-common (car (last company-candidates)))
+        (company-complete-selection)
+      (company-select-previous))))
+
+(define-key company-active-map (kbd "TAB") 'my-company-tab-or-complete)
+(define-key company-active-map (kbd "<tab>") 'my-company-tab-or-complete)
+(define-key company-active-map (kbd "S-TAB") 'my-company-backtab-or-complete)
+(define-key company-active-map (kbd "<backtab>") 'my-company-backtab-or-complete)
+
+(use-package company-quickhelp
+  :ensure t
+  :after company
+  :config
+  (company-quickhelp-mode 1))
+
+(defun my-disable-company-mode-in-python ()
+  "Desativa o Company Mode no modo Python."
+  (when (eq major-mode 'python-mode)
+    (company-mode -1))
+  (when (not (eq major-mode 'python-mode))
+    (company-mode 1)))
+
+(add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
+  #+end_src
+
+  #+RESULTS:
+  | doom-modeline-auto-set-modeline | doom-modeline-update-buffer-file-icon | global-centered-cursor-mode-enable-in-buffers | my-disable-company-mode-in-python | company-quickhelp-mode-enable-in-buffers | global-company-mode-enable-in-buffers | global-evil-collection-unimpaired-mode-enable-in-buffers | evil-mode-enable-in-buffers | global-display-line-numbers-mode-enable-in-buffers | global-eldoc-mode-enable-in-buffers | global-font-lock-mode-enable-in-buffers |
+
+** Garbage collection
+#+begin_src emacs-lisp :tangle yes
+  ;; (setq gc-cons-threshold most-positive-fixnum)
+  ;; (add-hook 'emacs-startup-hook
+  ;;           (lambda ()
+  ;;             (setq gc-cons-threshold (expt 2 23)))
+#+end_src
+** Config Dashboard:
+- Dashboard is a package that added a startup buffer
+  #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/dashboard_config_2.el" :mkdirp yes
+    (use-package dashboard
+      :config
+      (dashboard-setup-startup-hook)
+      (setq dashboard-center-content t
+            dashboard-set-heading-icons t
+            dashboard-set-file-icons t
+            dashboard-banner-logo-title "WE’RE LEAN, WE’RE GREEN, AND WE’RE MEAN!"
+            dashboard-items '((recents . 5))
+            dashboard-startup-banner "~/.emacs.d/assets/mezemacs_logo.png"
+            dashboard-image-banner-max-height 350)
+      :init
+      (add-hook 'dashboard-after-initialize-hook
+                (lambda ()
+                  (dashboard-insert-startupify-lists))))
+  #+end_src
+- Now we import to the main config
+  #+begin_src emacs-lisp :tangle yes
+    (load-file "~/.emacs.d/configs/dashboard_config_2.el")
+  #+end_src
+** Some modifications to the :q and :wq of evil mode
+#+begin_src emacs-lisp :tangle yes
+  (defun kill-current-buffer ()
+
+    "kill the current buffer."
+    (interactive)
+    (kill-buffer (buffer-name)))
+  (global-set-key [remap evil-quit] 'kill-current-buffer)
+
+  (defun my-quit-emacs ()
+    "Quit Emacs, or close current frame if there are multiple frames."
+    (interactive)
+    (if (eq window-system 'x)
+        (if (cdr (frame-list))
+            (delete-frame)
+          (message "Can't quit Emacs with only one graphical frame"))
+      (kill-emacs)))
+
+  (global-set-key [remap evil-quit] 'kill-current-buffer)
+  (global-set-key [remap evil-save-and-quit] 'my-quit-emacs)
+
+#+end_src
+** Config Which-key:
+- Helps to find what keybind you trying to tap
+  #+begin_src emacs-lisp :tangle yes
+    (use-package which-key
+      :commands (which-key-mode)
+      :hook ((after-init . which-key-mode)
+             (pre-command . which-key-mode))
+      :config
+      (setq which-key-idle-delay 1)
+      :diminish which-key-mode)
+  #+end_src
+** Config ivy and adjacent packages
+- ivy:
+  - Melhora a pesquisa de arquivos e diretórios no mini-buffer.
+    #+begin_src emacs-lisp :tangle yes
+    (use-package ivy
+        :diminish
+        :bind (:map ivy-minibuffer-map
+                    ("TAB" . ivy-alt-done)
+                    ("C-l" . ivy-alt-done)
+                    ("C-j" . ivy-next-line)
+                    ("C-k" . ivy-previous-line)
+                    :map ivy-switch-buffer-map
+                    ("C-k" . ivy-previous-line)
+                    ("C-l" . ivy-done)
+                    ("C-d" . ivy-switch-buffer-kill)
+                    :map ivy-reverse-i-search-map
+                    ("C-k" . ivy-previous-line)
+                    ("C-d" . ivy-reverse-i-search-kill))
+        :config
+        (ivy-mode 1))
+    #+end_src
+- Ivy rich:
+  - Melhora a experiência do ivy, assim como deixa mais bonito e mostra informações adicionais.
+    #+begin_src emacs-lisp :tangle yes
+      (require 'ivy-rich)
+      (ivy-rich-mode 1)
+      (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
+    #+end_src
+- Counsel
+  - Make the search in emacs even better. Counsel is make up on ivy
+    #+begin_src emacs-lisp :tangle yes
+      (use-package counsel
+        :bind (("C-x C-b" . 'counsel-switch-buffer)
+               :map minibuffer-local-map
+               ("C-r" . 'counsel-minibuffer-history))
+        :config
+        (counsel-mode 1))
+    #+end_src
+- ivy-perscient:
+  - Melhora a sugestão de comandos e pesquisa baseado nas usas interações prévias.
+    #+begin_src emacs-lisp :tangle yes
+      (use-package ivy-prescient
+        :after counsel
+        :custom
+        (ivy-prescient-enable-filtering nil)
+        :config
+        (ivy-prescient-mode 1))
+    #+end_src
+- ivy-posframe:
+  - Ivy flutuante.
+    #+begin_src emacs-lisp :tangle yes
+      (require 'ivy-posframe)
+      (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display)))
+      (set-face-attribute 'ivy-posframe nil :foreground "white" :background "#301934")
+      (setq ivy-posframe-hide-minibuffer t)
+      (ivy-posframe-mode 1)
+    #+end_src
+** Config helpful:
+- Exibe documentação, ajuda a pesquisar e tirar dúvidas em coisas que você precisa, como pesquisar os comandos que você deseja usar.
+  #+begin_src emacs-lisp :tangle yes
+    (use-package helpful
+      :custom
+      (counsel-describe-function-function #'helpful-callable)
+      (counsel-describe-variable-function #'helpful-variable)
+      :bind
+      ([remap describe-function] . counsel-descbinds-function)
+      ([remap describe-command] . helpful-command)
+      ([remap describe-variable] . counsel-describe-variable)
+      ([remap describe-key] . helpful-key))
+  #+end_src
+** Config Eshell
+- Eshell is the emacs shell, simulates shells like bash
+#+begin_src emacs-lisp :tangle "~/.emacs.d/configs/eshell_config_2.el" :mkdirp yes
+    (defun efs/configure-eshell ()
+      ;; Save command history when commands are entered
+      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+      ;; Truncate buffer for performance
+      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+      ;; Bind some useful keys for evil-mode
+      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+      (evil-normalize-keymaps)
+
+      (setq eshell-history-size         10000
+            eshell-buffer-maximum-lines 10000
+            eshell-hist-ignoredups t
+            eshell-scroll-to-bottom-on-input t))
+
+    (use-package eshell-git-prompt)
+
+    (use-package eshell
+      :hook (eshell-first-time-mode . efs/configure-eshell)
+      :config
+
+      (with-eval-after-load 'esh-opt
+        (setq eshell-destroy-buffer-when-process-dies t)
+        (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+      (eshell-git-prompt-use-theme 'powerline))
+
+    (setq eshell-ls-use-ls-dired t)
+    (add-hook 'eshell-mode-hook
+              (lambda ()
+                (eshell-ls-register-ext-dir ".")
+                (define-key eshell-mode-map (kbd "C-l") 'eshell-clear-buffer)
+                (define-key eshell-mode-map (kbd "C-d") 'eshell-send-input)))
+
+  (defun my/set-eshell-foreground ()
+    (setq-local face-remapping-alist '((default (:foreground "white")))))
+  (add-hook 'eshell-mode-hook 'my/set-eshell-foreground)
+
+    (add-hook 'eshell-mode-hook 'my/disable-line-numbers)
+(defun my/disable-line-numbers ()
+  (display-line-numbers-mode -1))
+
+#+end_src
+
+#+RESULTS:
+: my/disable-line-numbers
+
+- Importing eshell to the main config
+  #+begin_src emacs-lisp :tangle yes
+    (defun my-eshell-config ()
+      (setq eshell_config "~/.emacs.d/configs/eshell_config.el")
+      (load eshell_config))
+
+    (add-hook 'eshell-mode-hook #'my-eshell-config)
+  #+end_src
+** Config no-littering:
+- Ajuda a manter o diretório do emacs organizado. Arquivos temporários e backup são salvos em lugares específicos.
+  #+begin_src emacs-lisp :tangle yes
+    (use-package no-littering)
+    (setq auto-save-file-name-transforms
+          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  #+end_src
+** Config Dired & adjacent packages:
+- Dired:
+  - É o modo do Emacs para navegar e gerencair diretórios e arquivos no sistema de arquivos.
+    #+begin_src emacs-lisp :tangle yes
+      ;; (use-package dired
+      ;;   :ensure nil
+      ;;   :commands (dired dired-jump)
+      ;;   :bind (("C-x C-j" . dired-jump))
+      ;;   :custom ((dired-listing-switches "-agho --group-directories-first"))
+      ;;   :config
+      ;;   (evil-collection-define-key 'normal 'dired-mode-map
+      ;;     "h" 'dired-single-up-directory
+      ;;     "j" 'dired-single-buffer))
+    #+end_src
+- dired-single & dired-all-the-icons:
+  - Aprimora a funcionalidade do modo dired, permitindo que você abra diretórios em uma única janela, substituindo o buffer atual, em vez de abrir uam nova janela para cada diretório.
+    #+begin_src emacs-lisp :tangle yes
+      ;; (use-package dired-single)
+
+      ;; (use-package all-the-icons-dired
+      ;;   :hook (dired-mode . all-the-icons-dired-mode))
+    #+end_src
+- Dired-open & dired-hide-dotfiles:
+  - Adiciona suporte para abrir arquivos diretamente do modo dired usando aplicativos externos adequados ao tipo de arquivo.
+    #+begin_src emacs-lisp :tangle yes
+      ;; (use-package dired-open
+      ;;   :config
+      ;;   (setq dired-open-extensions '(("png" . "feh")
+      ;;                                 ("mkv" . "mpv"))))
+
+      ;; (use-package dired-hide-dotfiles
+      ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
+      ;;   :config
+      ;;   (evil-collection-define-key 'normal 'dired-mode-map
+      ;;     "H" 'dired-hide-dotfiles-mode))
+    #+end_src
+** Config Centered window & cursor:
+#+begin_src emacs-lisp :tangle yes
+  ;;;;; center ;;;;;;
+  (use-package centered-window
+    :ensure t
+    :config
+    (centered-window-mode t))
+
+  (use-package centered-cursor-mode
+    :demand
+    :config
+    (global-centered-cursor-mode))
+#+end_src
+** Config rainbows mode:
+- Rainbow mode:
+  - Toda cor escrita ou com código hexadecimal é pintada da cor na qual representa.
+    #+begin_src emacs-lisp :tangle yes
+      (use-package rainbow-mode
+        :hook ((prog-mode . rainbow-mode)
+               (after-init . rainbow-mode))
+        :config
+        (setq rainbow-identfiers-choose-face-function 'rainbow-identifers-cie-l*a*b*-choose-face
+              rainbow-identifiers-cie-l*a*b*-lightness 45
+              rainbow-identifiers-cie-l*a*b*-saturation 70
+              rainbow-identifiers-rgb-face t))
+    #+end_src
+- Rainbow delimiters:
+  - Deixa os [({})] coloridos para que seja mais fácil visualizar o nível que você está e quais chaves você abriu e esqueceu de fechar.
+    #+begin_src emacs-lisp :tangle yes
+      (use-package rainbow-delimiters
+        :hook ((prog-mode . rainbow-delimiters-mode)
+               (org-mode . rainbow-delimiters-mode))
+        :custom-face
+        (rainbow-delimiters-depth-1-face ((t (:foreground "#ff2600"))))
+        (rainbow-delimiters-depth-2-face ((t (:foreground "#f0a000"))))
+        (rainbow-delimiters-depth-3-face ((t (:foreground "#ffdf00"))))
+        (rainbow-delimiters-depth-4-face ((t (:foreground "#40ff00"))))
+        (rainbow-delimiters-depth-5-face ((t (:foreground "#00f0a0"))))
+        (rainbow-delimiters-depth-6-face ((t (:foreground "#0080ff"))))
+        (rainbow-delimiters-depth-7-face ((t (:foreground "#bf00ff"))))
+        (rainbow-delimiters-depth-8-face ((t (:foreground "#ff00bf"))))
+        (rainbow-delimiters-depth-9-face ((t (:foreground "#ff0080")))))
+    #+end_src
+** Config Transparent emacs
+- Transparency configs:
+  #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/transparency_config_2.el" :mkdirp yes
+    ;; Define functions to increase/decrease transparency by 5
+    (defun transparency-increase ()
+      (interactive)
+      (let* ((alpha-list '((100 100) (85 65) (70 50) (55 35) (40 20) (25 10) (10 5) (0 0)))
+             (current-alpha (or (cdr (assoc 'alpha (frame-parameters))) (cons 100 100)))
+             (closest (car alpha-list)))
+        (dolist (a alpha-list)
+          (when (> (abs (- (car a) (car current-alpha))) (abs (- (car closest) (car current-alpha)))))
+          (setq closest a))
+        (set-frame-parameter (selected-frame) 'alpha closest)))
+
+    (defun transparency-decrease ()
+      (interactive)
+      (let* ((alpha-list '((100 100) (85 65) (70 50) (55 35) (40 20) (25 10) (10 5) (0 0)))
+             (current-alpha (or (cdr (assoc 'alpha (frame-parameters))) (cons 100 100)))
+             (closest (car alpha-list)))
+        (dolist (a (reverse alpha-list))
+          (when (> (abs (- (car a) (car current-alpha))) (abs (- (car closest) (car current-alpha)))))
+          (setq closest a))
+        (set-frame-parameter (selected-frame) 'alpha closest)))
+
+    ;; Define function to set transparency to a specific value
+    (defun transparency-set (value)
+      (interactive "nTransparency Value (0-100): ")
+      (set-frame-parameter (selected-frame) 'alpha (cons value value)))
+
+
+
+    ;; Set keybindings for transparency functions
+    (global-set-key (kbd "C-c C-t +") 'transparency-increase)
+    (global-set-key (kbd "C-c C-t -") 'transparency-decrease)
+    (global-set-key (kbd "C-c C-t =") 'transparency-set)
+  #+end_src
+- Importing the config to the main file
+  #+begin_src emacs-lisp :tangle yes
+    (load-file "~/.emacs.d/configs/transparency_config_2.el")
+  #+end_src
+** Config Org Mode
+- Configurations for Org mode
+  #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/org_config_2.el" :mkdirp yes
+    (defun efs/org-font-setup ()
+      ;; Replace list hyphen with dot
+      (font-lock-add-keywords 'org-mode
+                              '(("^ *\\([-]\\) "
+                                 (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+      (add-hook 'org-mode-hook 'visual-line-mode)
+      ;; Set faces for heading levels
+      (dolist (face '((org-level-1 . 1.2)
+                      (org-level-2 . 1.1)
+                      (org-level-3 . 1.05)
+                      (org-level-4 . 1.0)
+                      (org-level-5 . 1.1)
+                      (org-level-6 . 1.1)
+                      (org-level-7 . 1.1)
+                      (org-level-8 . 1.1)))
+        (set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height 150 ))
+
+      ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+      (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+      (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+      (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+      (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+    (defun efs/org-mode-setup ()
+      (org-indent-mode)
+      (variable-pitch-mode 1)
+      (visual-line-mode 1))
+
+    (use-package org
+      :hook (org-mode . efs/org-mode-setup)
+      :config
+      (setq org-ellipsis " ▾"))
+
+    (use-package org-bullets
+      :after org
+      :hook (org-mode . org-bullets-mode)
+      :custom
+      (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp :tangle yes . t)
+       (python . t)
+       (ein . t)))
+    (push '("conf-unix" . conf-unix) org-src-lang-modes)
+    ;; This is needed as of Org 9.2
+    (require 'org-tempo)
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp :tangle yes"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python :tangle yes :results output"))
+    (add-to-list 'org-structure-template-alist '("ein" . "src ein-python :session localhost"))
+    ;; Automatically tangle our Emacs.org config file when we save it
+    (defun efs/org-babel-tangle-config ()
+      (when (string-equal (buffer-file-name)
+                          (expand-file-name "~/Projects/Code/emacs-from-scratch/Emacs.org"))
+        ;; Dynamic scoping to the rescue
+        (let ((org-confirm-babel-evaluate nil))
+          (org-babel-tangle))))
+    (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
+
+
+    (custom-set-faces
+     '(org-block-begin-line
+       ((t (
+            :box '(:line-width 3 :color "purple")
+            :foreground "purple" :background "#46005f" :extend t))))
+     '(org-block
+       ((t (:background "#301934" :extend t))))
+     '(org-block-end-line
+       ((t (
+            :box '(:line-width 3 :color "purple")
+            :foreground "purple" :background "#46005f" :extend t))))
+     )
+  #+end_src
+- Importing org config to the main file
+  #+begin_src emacs-lisp :tangle yes
+    ;;;;; org mode ;;;;;
+    (defun my-org-config ()
+      (setq orgConfig-file "~/.emacs.d/configs/org_config.el")
+      (load orgConfig-file))
+    (add-hook 'org-mode-hook #'my-org-config)
+  #+end_src
+** Config Doom modeline
+- Let the modeline better
+  #+begin_src emacs-lisp :tangle yes
+    ;; Doom modeline
+    (use-package all-the-icons)
+    (use-package nerd-icons)
+    (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom ((doom-modeline-height 15)))
+  #+end_src
+** Config Golden ration
+- Give more space to the in focus buffer
+  #+begin_src emacs-lisp :tangle yes
+    (require 'golden-ratio)
+    (golden-ratio-mode 1)
+  #+end_src
+** Config Treemacs
+- Configuration have a nice directory tree by the side
+  #+begin_src emacs-lisp :tangle yes
+    ;;;;; treemacs
+    (use-package treemacs
+      :ensure t
+      :config
+      (with-eval-after-load 'treemacs
+        (treemacs-project-follow-mode t))
+      (setq tree-macs-show-icons t) ; Enable icons in the tree view
+      (setq tree-macs-width 30) ; Set the width of the tree view
+  
+      ;; Customize keybindings (optional)
+      (global-set-key (kbd "C-c t") 'tree-macs-toggle)
+
+      ;; Define custom file filter
+      (setq tree-macs-file-filters
+            '(;; Exclude some file types
+              (not (name . "\\.git"))
+              (not (name . "\\.DS_Store"))
+              (not (name . "\\.pyc")))))
+  #+end_src
+** Config My python
+- Configuration for python. Heare we have the packages:
+  - elpy:
+    - All the configuration for run python in emacs.
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+      (use-package elpy
+        :ensure t
+        :init
+        (elpy-enable)
+        :config
+        (setq python-shell-interpreter "python")
+        (setq elpy-rpc-python-command "python")
+        (add-hook 'python-mode-hook 'pyvenv-mode))
+
+    #+end_src
+  - pyvenv:
+    - Package to create and use py venvs.
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+      ;; Use 'pyvenv' for virtualenv management
+      (use-package pyvenv
+        :ensure t
+        :hook (python-mode . pyvenv-mode))
+    #+end_src
+  - blacken:
+    - Too for code formatation.
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+      ;; Use 'black' for code formatting
+      (use-package blacken
+        :ensure t
+        :hook (python-mode . blacken-mode))
+
+    #+end_src
+  - Flycheck:
+    - Verification of code error and warnings in real time.
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+      ;; Enable 'flycheck' for syntax checking
+      (use-package flycheck
+        :ensure t
+        :init (global-flycheck-mode))
+    #+end_src
+  - Python:
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+      (use-package python
+        :ensure t
+        :config
+        (add-hook 'python-mode-hook
+                  (lambda ()
+                    (local-set-key (kbd "M-.") 'jedi:goto-definition))))
+    #+end_src
+  - Jedi:
+    - Libary for python code completions.
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+(use-package jedi
+  :ensure t
+  :init
+  (setq jedi:use-shortcuts t)
+  :config
+  (setq ac-delay 0.1) ; Configuração para auto-complete instantâneo
+  (setq eldoc-idle-delay 0.1) ; Configuração para acelerar a exibição das informações
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (eval-after-load 'jedi-core
+    '(progn
+       ;; (setq jedi-completion-function 'company-jedi) ; Use Company para Jedi completions
+       (define-key jedi-mode-map (kbd "M-.") 'jedi:goto-definition)
+       (define-key jedi-mode-map (kbd "M-,") 'jedi:goto-definition-pop-marker)
+       (define-key jedi-mode-map (kbd "M-r") 'jedi:show-doc)
+       (define-key jedi-mode-map (kbd "M-*") 'jedi:pop-to-definition-pop-marker))))
+    #+end_src
+  - IPy Kernel:
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+      ;; ;; Us e IPython if available
+      (when (executable-find "ipython")
+        (setq python-shell-interpreter "ipython")
+        (setq python-shell-interpreter-args "-i --simple-prompt"))
+    #+end_src
+- Function to disable company mode in jedi-mode
+  #+begin_src emacs-lisp :tangle yes
+
+       (defun my-disable-company-mode-in-python ()
+         "Desativa o Company Mode no modo Python."
+         (when (eq major-mode 'python-mode)
+           (company-mode -1))
+         (when (not (eq major-mode 'python-mode))
+           (company-mode 1)))
+
+       (add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
+    
+       #+end_src
+- Emacs IPython Notebook:
+#+begin_src emacs-lisp :tangle "~/.emacs.d/configs/python_config_2.el" :mkdirp yes
+        (use-package ein
+        :ensure t)
+#+end_src
+- Now we import the config for the main file
+  #+begin_src emacs-lisp :tangle yes
+    (defun my-python-config ()
+      (setq pythonConfig-file "~/.emacs.d/configs/python_config.el")
+      (load pythonConfig-file))
+    (add-hook 'python-mode-hook #'my-python-config)
+  #+end_src
+** Function to not disable number collumn for some modes
+#+begin_src emacs-lisp :tangle yes
+
+  (defun my-disable-line-numbers ()
+    "Disable line numbers."
+    (display-line-numbers-mode 0))
+
+
+
+  (add-hook 'org-mode-hook 'my-disable-line-numbers)
+  (add-hook 'term-mode-hook 'my-disable-line-numbers)
+  (add-hook 'shell-mode-hook 'my-disable-line-numbers)
+  (add-hook 'eshell-mode-hook 'my-disable-line-numbers)
+  (add-hook 'dashboard-mode-hook 'my-disable-line-numbers)
+#+end_src
+** Function to display the startup time
+#+begin_src emacs-lisp :tangle yes
+  (defvar my-init-start-time (current-time) "Time when init.el was started")
+  (defun display-start-up-echo-area-message ()
+    (message "Emacs Initialized in %.2fs: " (float-time (time-subtract (current-time) my-init-start-time))))
+#+end_src
