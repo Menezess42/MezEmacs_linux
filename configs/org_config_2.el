@@ -1,19 +1,20 @@
 (defun efs/org-font-setup ()
   ;; Replace list hyphen with dot
   (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+			  '(("^ *\\([-]\\) "
+			     (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
   (add-hook 'org-mode-hook 'visual-line-mode)
   ;; Set faces for heading levels
   (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height 150 ))
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil
+			:font "FiraCode Nerd Font" :weight 'regular :height (* 10 (cdr face)) ))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -53,7 +54,7 @@
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun efs/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/Projects/Code/emacs-from-scratch/Emacs.org"))
+		      (expand-file-name "~/Projects/Code/emacs-from-scratch/Emacs.org"))
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
@@ -63,12 +64,12 @@
 (custom-set-faces
  '(org-block-begin-line
    ((t (
-        :box '(:line-width 3 :color "purple")
-        :foreground "purple" :background "#46005f" :extend t))))
+	:box '(:line-width 3 :color "purple")
+	:foreground "purple" :background "#46005f" :extend t))))
  '(org-block
    ((t (:background "#301934" :extend t))))
  '(org-block-end-line
    ((t (
-        :box '(:line-width 3 :color "purple")
-        :foreground "purple" :background "#46005f" :extend t))))
+	:box '(:line-width 3 :color "purple")
+	:foreground "purple" :background "#46005f" :extend t))))
  )

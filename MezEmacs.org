@@ -21,7 +21,7 @@
     (setq display-line-numbers-type 'relative)
 
     (electric-pair-mode t)
-    (setq-default indent-tabs-mode nil)
+    (setq-default indent-tabs-mode t)
 
     (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -202,10 +202,6 @@
 
 (add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
   #+end_src
-
-  #+RESULTS:
-  | doom-modeline-auto-set-modeline | doom-modeline-update-buffer-file-icon | global-centered-cursor-mode-enable-in-buffers | my-disable-company-mode-in-python | company-quickhelp-mode-enable-in-buffers | global-company-mode-enable-in-buffers | global-evil-collection-unimpaired-mode-enable-in-buffers | evil-mode-enable-in-buffers | global-display-line-numbers-mode-enable-in-buffers | global-eldoc-mode-enable-in-buffers | global-font-lock-mode-enable-in-buffers |
-
 ** Garbage collection
 #+begin_src emacs-lisp :tangle yes
   ;; (setq gc-cons-threshold most-positive-fixnum)
@@ -270,7 +266,7 @@
   #+end_src
 ** Config ivy and adjacent packages
 - ivy:
-  - Melhora a pesquisa de arquivos e diretórios no mini-buffer.
+  - improve file and directory searcch in the mini-buffer.
     #+begin_src emacs-lisp :tangle yes
     (use-package ivy
         :diminish
@@ -290,7 +286,7 @@
         (ivy-mode 1))
     #+end_src
 - Ivy rich:
-  - Melhora a experiência do ivy, assim como deixa mais bonito e mostra informações adicionais.
+  - Improve the ivy experience, enhance its aesthetics, and display additional information
     #+begin_src emacs-lisp :tangle yes
       (require 'ivy-rich)
       (ivy-rich-mode 1)
@@ -307,7 +303,7 @@
         (counsel-mode 1))
     #+end_src
 - ivy-perscient:
-  - Melhora a sugestão de comandos e pesquisa baseado nas usas interações prévias.
+  - Enhance command suggestions and search based on you previous interactions
     #+begin_src emacs-lisp :tangle yes
       (use-package ivy-prescient
         :after counsel
@@ -317,7 +313,7 @@
         (ivy-prescient-mode 1))
     #+end_src
 - ivy-posframe:
-  - Ivy flutuante.
+  - Floating ivy.
     #+begin_src emacs-lisp :tangle yes
       (require 'ivy-posframe)
       (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display)))
@@ -326,7 +322,7 @@
       (ivy-posframe-mode 1)
     #+end_src
 ** Config helpful:
-- Exibe documentação, ajuda a pesquisar e tirar dúvidas em coisas que você precisa, como pesquisar os comandos que você deseja usar.
+- Display documentation, helps with searching, and answers questions about thing you need, such as searching for the commands you want to use.
   #+begin_src emacs-lisp :tangle yes
     (use-package helpful
       :custom
@@ -386,10 +382,6 @@
   (display-line-numbers-mode -1))
 
 #+end_src
-
-#+RESULTS:
-: my/disable-line-numbers
-
 - Importing eshell to the main config
   #+begin_src emacs-lisp :tangle yes
     (defun my-eshell-config ()
@@ -399,7 +391,7 @@
     (add-hook 'eshell-mode-hook #'my-eshell-config)
   #+end_src
 ** Config no-littering:
-- Ajuda a manter o diretório do emacs organizado. Arquivos temporários e backup são salvos em lugares específicos.
+- helps maintain an organized emacs directory. Temporary files and backups are saved in specific locations.
   #+begin_src emacs-lisp :tangle yes
     (use-package no-littering)
     (setq auto-save-file-name-transforms
@@ -407,7 +399,7 @@
   #+end_src
 ** Config Dired & adjacent packages:
 - Dired:
-  - É o modo do Emacs para navegar e gerencair diretórios e arquivos no sistema de arquivos.
+  - It is Emacs' mode for navigating and managing directories and files in the file system.
     #+begin_src emacs-lisp :tangle yes
       ;; (use-package dired
       ;;   :ensure nil
@@ -420,15 +412,15 @@
       ;;     "j" 'dired-single-buffer))
     #+end_src
 - dired-single & dired-all-the-icons:
-  - Aprimora a funcionalidade do modo dired, permitindo que você abra diretórios em uma única janela, substituindo o buffer atual, em vez de abrir uam nova janela para cada diretório.
+  - Enhances the functionality of the dired mode, allowing you to open directories in a single window, replacing the current buffer instead of opening a new window for each directory.
     #+begin_src emacs-lisp :tangle yes
-      ;; (use-package dired-single)
+        ;; (use-package dired-single)
 
-      ;; (use-package all-the-icons-dired
-      ;;   :hook (dired-mode . all-the-icons-dired-mode))
+        ;; (use-package all-the-icons-dired
+        ;;   :hook (dired-mode . all-the-icons-dired-mode))
     #+end_src
 - Dired-open & dired-hide-dotfiles:
-  - Adiciona suporte para abrir arquivos diretamente do modo dired usando aplicativos externos adequados ao tipo de arquivo.
+  - Adds support for opening files directly from dired mode using external applications suitable for the file type.
     #+begin_src emacs-lisp :tangle yes
       ;; (use-package dired-open
       ;;   :config
@@ -456,7 +448,7 @@
 #+end_src
 ** Config rainbows mode:
 - Rainbow mode:
-  - Toda cor escrita ou com código hexadecimal é pintada da cor na qual representa.
+  - All written or hexadecimal color codes are displayed in the corresponding color they represent.
     #+begin_src emacs-lisp :tangle yes
       (use-package rainbow-mode
         :hook ((prog-mode . rainbow-mode)
@@ -468,8 +460,8 @@
               rainbow-identifiers-rgb-face t))
     #+end_src
 - Rainbow delimiters:
-  - Deixa os [({})] coloridos para que seja mais fácil visualizar o nível que você está e quais chaves você abriu e esqueceu de fechar.
-    #+begin_src emacs-lisp :tangle yes
+  - Colors the [({})] symbols to make it easier to visualize the level you're at and which brackets you have opened and may have forgotten to close.
+   #+begin_src emacs-lisp :tangle yes
       (use-package rainbow-delimiters
         :hook ((prog-mode . rainbow-delimiters-mode)
                (org-mode . rainbow-delimiters-mode))
@@ -530,19 +522,20 @@
     (defun efs/org-font-setup ()
       ;; Replace list hyphen with dot
       (font-lock-add-keywords 'org-mode
-                              '(("^ *\\([-]\\) "
-                                 (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+			      '(("^ *\\([-]\\) "
+				 (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
       (add-hook 'org-mode-hook 'visual-line-mode)
       ;; Set faces for heading levels
       (dolist (face '((org-level-1 . 1.2)
-                      (org-level-2 . 1.1)
-                      (org-level-3 . 1.05)
-                      (org-level-4 . 1.0)
-                      (org-level-5 . 1.1)
-                      (org-level-6 . 1.1)
-                      (org-level-7 . 1.1)
-                      (org-level-8 . 1.1)))
-        (set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height 150 ))
+		      (org-level-2 . 1.1)
+		      (org-level-3 . 1.05)
+		      (org-level-4 . 1.0)
+		      (org-level-5 . 1.1)
+		      (org-level-6 . 1.1)
+		      (org-level-7 . 1.1)
+		      (org-level-8 . 1.1)))
+	(set-face-attribute (car face) nil
+			    :font "FiraCode Nerd Font" :weight 'regular :height (* 10 (cdr face)) ))
 
       ;; Ensure that anything that should be fixed-pitch in Org files appears that way
       (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -582,31 +575,35 @@
     ;; Automatically tangle our Emacs.org config file when we save it
     (defun efs/org-babel-tangle-config ()
       (when (string-equal (buffer-file-name)
-                          (expand-file-name "~/Projects/Code/emacs-from-scratch/Emacs.org"))
-        ;; Dynamic scoping to the rescue
-        (let ((org-confirm-babel-evaluate nil))
-          (org-babel-tangle))))
+			  (expand-file-name "~/Projects/Code/emacs-from-scratch/Emacs.org"))
+	;; Dynamic scoping to the rescue
+	(let ((org-confirm-babel-evaluate nil))
+	  (org-babel-tangle))))
     (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
 
     (custom-set-faces
      '(org-block-begin-line
        ((t (
-            :box '(:line-width 3 :color "purple")
-            :foreground "purple" :background "#46005f" :extend t))))
+	    :box '(:line-width 3 :color "purple")
+	    :foreground "purple" :background "#46005f" :extend t))))
      '(org-block
        ((t (:background "#301934" :extend t))))
      '(org-block-end-line
        ((t (
-            :box '(:line-width 3 :color "purple")
-            :foreground "purple" :background "#46005f" :extend t))))
+	    :box '(:line-width 3 :color "purple")
+	    :foreground "purple" :background "#46005f" :extend t))))
      )
+
   #+end_src
+
+  #+RESULTS:
+
 - Importing org config to the main file
   #+begin_src emacs-lisp :tangle yes
     ;;;;; org mode ;;;;;
     (defun my-org-config ()
-      (setq orgConfig-file "~/.emacs.d/configs/org_config.el")
+      (setq orgConfig-file "~/.emacs.d/configs/org_config_2.el")
       (load orgConfig-file))
     (add-hook 'org-mode-hook #'my-org-config)
   #+end_src

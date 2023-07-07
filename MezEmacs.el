@@ -15,7 +15,7 @@
   (setq display-line-numbers-type 'relative)
 
   (electric-pair-mode t)
-  (setq-default indent-tabs-mode nil)
+  (setq-default indent-tabs-mode t)
 
   (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -270,7 +270,7 @@
 
 ;;;;; org mode ;;;;;
 (defun my-org-config ()
-  (setq orgConfig-file "~/.emacs.d/configs/org_config.el")
+  (setq orgConfig-file "~/.emacs.d/configs/org_config_2.el")
   (load orgConfig-file))
 (add-hook 'org-mode-hook #'my-org-config)
 
