@@ -1,5 +1,5 @@
 #+title: MezEmacs configuration
-# #+PROPERTY: header-args:emacs-lisp :tangle "./init_test.el" :mkdirp [yes]
+# #+PROPERTY: header-args:emacs-lisp :tangle "./MezEmacs.el" :mkdirp [yes]
 * MezEmacs configuration
 ** Startup configs
 - This is the basic config that everyone puts on emacs to make mor clear.
@@ -401,38 +401,39 @@
 - Dired:
   - It is Emacs' mode for navigating and managing directories and files in the file system.
     #+begin_src emacs-lisp :tangle yes
-      ;; (use-package dired
-      ;;   :ensure nil
-      ;;   :commands (dired dired-jump)
-      ;;   :bind (("C-x C-j" . dired-jump))
-      ;;   :custom ((dired-listing-switches "-agho --group-directories-first"))
-      ;;   :config
-      ;;   (evil-collection-define-key 'normal 'dired-mode-map
-      ;;     "h" 'dired-single-up-directory
-      ;;     "j" 'dired-single-buffer))
+      (use-package dired
+        :ensure nil
+        :commands (dired dired-jump)
+        :bind (("C-x C-j" . dired-jump))
+        :custom ((dired-listing-switches "-agho --group-directories-first"))
+        :config
+        (evil-collection-define-key 'normal 'dired-mode-map
+          "h" 'dired-single-up-directory
+          "g" 'dired-single-buffer))
     #+end_src
 - dired-single & dired-all-the-icons:
   - Enhances the functionality of the dired mode, allowing you to open directories in a single window, replacing the current buffer instead of opening a new window for each directory.
     #+begin_src emacs-lisp :tangle yes
-        ;; (use-package dired-single)
+      (use-package dired-single)
 
-        ;; (use-package all-the-icons-dired
-        ;;   :hook (dired-mode . all-the-icons-dired-mode))
+      (use-package all-the-icons-dired
+        :hook (dired-mode . all-the-icons-dired-mode))
     #+end_src
 - Dired-open & dired-hide-dotfiles:
   - Adds support for opening files directly from dired mode using external applications suitable for the file type.
     #+begin_src emacs-lisp :tangle yes
-      ;; (use-package dired-open
-      ;;   :config
-      ;;   (setq dired-open-extensions '(("png" . "feh")
-      ;;                                 ("mkv" . "mpv"))))
+      (use-package dired-open
+        :config
+        (setq dired-open-extensions '(("png" . "feh")
+                                      ("mkv" . "mpv"))))
 
-      ;; (use-package dired-hide-dotfiles
-      ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
-      ;;   :config
-      ;;   (evil-collection-define-key 'normal 'dired-mode-map
-      ;;     "H" 'dired-hide-dotfiles-mode))
+      (use-package dired-hide-dotfiles
+        :hook (dired-mode . dired-hide-dotfiles-mode)
+        :config
+        (evil-collection-define-key 'normal 'dired-mode-map
+          "H" 'dired-hide-dotfiles-mode))
     #+end_src
+
 ** Config Centered window & cursor:
 #+begin_src emacs-lisp :tangle yes
   ;;;;; center ;;;;;;
