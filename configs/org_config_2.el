@@ -30,11 +30,13 @@
   (visual-line-mode 1))
 
 (use-package org
+:ensure t
   :hook (org-mode . efs/org-mode-setup)
   :config
   (setq org-ellipsis " ▾"))
 
 (use-package org-bullets
+:ensure t
   :after org
   :hook (org-mode . org-bullets-mode)
   :custom

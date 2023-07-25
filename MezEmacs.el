@@ -27,16 +27,19 @@
 
 (load-file "~/.emacs.d/configs/tmnt_theme_color_2.el")
 
-(require 'package)
-(setq package-archive '(("melpa" . "https://melpa.org/packages/"
-                         )
-                        ("org" . "https://orgmode.org/elpa/")
-                        ("elpa" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
+;; Initialize package sources
+    (require 'package)
+
+    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			    ("org" . "https://orgmode.org/elpa/")
+			    ("elpa" . "https://elpa.gnu.org/packages/")))
+
+    (package-initialize)
+    (unless package-archive-contents
+    (package-refresh-contents))
 
 (use-package general
+:ensure t
   :config
   (general-create-definer rune/leader-keys
     :keymaps '(normal insert visual emacs)
@@ -138,27 +141,29 @@
 (global-set-key [remap evil-save-and-quit] 'my-quit-emacs)
 
 (use-package which-key
+:ensure t
   :commands (which-key-mode)
   :hook ((after-init . which-key-mode)
-         (pre-command . which-key-mode))
+	 (pre-command . which-key-mode))
   :config
   (setq which-key-idle-delay 1)
   :diminish which-key-mode)
 
 (use-package ivy
+:ensure t
     :diminish
     :bind (:map ivy-minibuffer-map
-                ("TAB" . ivy-alt-done)
-                ("C-l" . ivy-alt-done)
-                ("C-j" . ivy-next-line)
-                ("C-k" . ivy-previous-line)
-                :map ivy-switch-buffer-map
-                ("C-k" . ivy-previous-line)
-                ("C-l" . ivy-done)
-                ("C-d" . ivy-switch-buffer-kill)
-                :map ivy-reverse-i-search-map
-                ("C-k" . ivy-previous-line)
-                ("C-d" . ivy-reverse-i-search-kill))
+		("TAB" . ivy-alt-done)
+		("C-l" . ivy-alt-done)
+		("C-j" . ivy-next-line)
+		("C-k" . ivy-previous-line)
+		:map ivy-switch-buffer-map
+		("C-k" . ivy-previous-line)
+		("C-l" . ivy-done)
+		("C-d" . ivy-switch-buffer-kill)
+		:map ivy-reverse-i-search-map
+		("C-k" . ivy-previous-line)
+		("C-d" . ivy-reverse-i-search-kill))
     :config
     (ivy-mode 1))
 
@@ -167,13 +172,15 @@
 (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
 
 (use-package counsel
+:ensure t
   :bind (("C-x C-b" . 'counsel-switch-buffer)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history))
+	 :map minibuffer-local-map
+	 ("C-r" . 'counsel-minibuffer-history))
   :config
   (counsel-mode 1))
 
 (use-package ivy-prescient
+:ensure t
   :after counsel
   :custom
   (ivy-prescient-enable-filtering nil)
@@ -202,7 +209,8 @@
 
 (add-hook 'eshell-mode-hook #'my-eshell-config)
 
-(use-package no-littering)
+(use-package no-littering
+:ensure t)
 (setq auto-save-file-name-transforms
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
@@ -224,7 +232,7 @@
 (use-package dired-open
   :config
   (setq dired-open-extensions '(("png" . "feh")
-                                ("mkv" . "mpv"))))
+				("mkv" . "mpv"))))
 
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -239,24 +247,27 @@
   (centered-window-mode t))
 
 (use-package centered-cursor-mode
+:ensure t
   :demand
   :config
   (global-centered-cursor-mode))
 
 (use-package rainbow-mode
+:ensure t
   :hook ((prog-mode . rainbow-mode)
-         (after-init . rainbow-mode))
+	 (after-init . rainbow-mode))
   :config
   (setq rainbow-identfiers-choose-face-function 'rainbow-identifers-cie-l*a*b*-choose-face
-        rainbow-identifiers-cie-l*a*b*-lightness 45
-        rainbow-identifiers-cie-l*a*b*-saturation 70
-        rainbow-identifiers-rgb-face t))
+	rainbow-identifiers-cie-l*a*b*-lightness 45
+	rainbow-identifiers-cie-l*a*b*-saturation 70
+	rainbow-identifiers-rgb-face t))
 
 (use-package rainbow-delimiters
+:ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)
-         (org-mode . rainbow-delimiters-mode))
+	 (org-mode . rainbow-delimiters-mode))
   :custom-face
-  (rainbow-delimiters-depth-1-face ((t (:foreground "#ff2600"))))
+  (rainbow-delimiters-depth-1-face ((t (:foreground "#92c48f"))))
   (rainbow-delimiters-depth-2-face ((t (:foreground "#f0a000"))))
   (rainbow-delimiters-depth-3-face ((t (:foreground "#ffdf00"))))
   (rainbow-delimiters-depth-4-face ((t (:foreground "#40ff00"))))

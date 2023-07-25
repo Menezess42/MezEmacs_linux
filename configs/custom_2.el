@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(elpy-company-post-completion-function 'ignore)
  '(package-selected-packages
-   '(company-jedi which-key use-package treemacs rainbow-mode rainbow-delimiters py-autopep8 org-bullets no-littering jedi ivy-rich ivy-prescient ivy-posframe helpful golden-ratio general flycheck evil-collection eshell-git-prompt elpy ein doom-modeline dired-single dired-open dired-hide-dotfiles dashboard counsel company-quickhelp centered-window centered-cursor-mode blacken all-the-icons-dired)))
+   '(python pyvenv all-the-icons nerd-icons evil company-jedi which-key use-package treemacs rainbow-mode rainbow-delimiters py-autopep8 org-bullets no-littering jedi ivy-rich ivy-prescient ivy-posframe helpful golden-ratio general flycheck evil-collection eshell-git-prompt elpy ein doom-modeline dired-single dired-open dired-hide-dotfiles dashboard counsel company-quickhelp centered-window centered-cursor-mode blacken all-the-icons-dired)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

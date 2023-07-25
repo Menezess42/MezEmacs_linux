@@ -1,6 +1,6 @@
 ;; Set the color theme for the Teenage Mutant Ninja Turtles
 (custom-set-faces
- '(default ((t (:background "#2e2e2e" :foreground "#9966cc"))))
+ '(default ((t (:background "#2d3339" :foreground "#9966cc"))))
  '(font-lock-comment-face ((t (:foreground "#b9b9b9"))))
  '(font-lock-comment-delimiter-face ((t (:foreground "#b9b9b9"))))
  '(font-lock-string-face ((t (:foreground "#e6a75e"))))

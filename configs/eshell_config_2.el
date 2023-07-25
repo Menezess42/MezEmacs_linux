@@ -11,28 +11,30 @@
       (evil-normalize-keymaps)
 
       (setq eshell-history-size         10000
-            eshell-buffer-maximum-lines 10000
-            eshell-hist-ignoredups t
-            eshell-scroll-to-bottom-on-input t))
+	    eshell-buffer-maximum-lines 10000
+	    eshell-hist-ignoredups t
+	    eshell-scroll-to-bottom-on-input t))
 
-    (use-package eshell-git-prompt)
+    (use-package eshell-git-prompt
+:ensure t)
 
     (use-package eshell
+:ensure t
       :hook (eshell-first-time-mode . efs/configure-eshell)
       :config
 
       (with-eval-after-load 'esh-opt
-        (setq eshell-destroy-buffer-when-process-dies t)
-        (setq eshell-visual-commands '("htop" "zsh" "vim")))
+	(setq eshell-destroy-buffer-when-process-dies t)
+	(setq eshell-visual-commands '("htop" "zsh" "vim")))
 
       (eshell-git-prompt-use-theme 'powerline))
 
     (setq eshell-ls-use-ls-dired t)
     (add-hook 'eshell-mode-hook
-              (lambda ()
-                (eshell-ls-register-ext-dir ".")
-                (define-key eshell-mode-map (kbd "C-l") 'eshell-clear-buffer)
-                (define-key eshell-mode-map (kbd "C-d") 'eshell-send-input)))
+	      (lambda ()
+		(eshell-ls-register-ext-dir ".")
+		(define-key eshell-mode-map (kbd "C-l") 'eshell-clear-buffer)
+		(define-key eshell-mode-map (kbd "C-d") 'eshell-send-input)))
 
   (defun my/set-eshell-foreground ()
     (setq-local face-remapping-alist '((default (:foreground "white")))))

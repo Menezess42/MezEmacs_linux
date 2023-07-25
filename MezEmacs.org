@@ -39,7 +39,7 @@
   #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/tmnt_theme_color_2.el" :mkdirp yes
     ;; Set the color theme for the Teenage Mutant Ninja Turtles
     (custom-set-faces
-     '(default ((t (:background "#2e2e2e" :foreground "#9966cc"))))
+     '(default ((t (:background "#2d3339" :foreground "#9966cc"))))
      '(font-lock-comment-face ((t (:foreground "#b9b9b9"))))
      '(font-lock-comment-delimiter-face ((t (:foreground "#b9b9b9"))))
      '(font-lock-string-face ((t (:foreground "#e6a75e"))))
@@ -104,27 +104,30 @@
 ** Config the repositorys for download the packages
 - List of repositorys that we take our packages, and the basic package to config all the other packages
 #+begin_src emacs-lisp :tangle yes
-  (require 'package)
-  (setq package-archive '(("melpa" . "https://melpa.org/packages/"
-                           )
-                          ("org" . "https://orgmode.org/elpa/")
-                          ("elpa" . "https://elpa.gnu.org/packages/")))
-  (package-initialize)
-  (unless package-archive-contents
+;; Initialize package sources
+    (require 'package)
+
+    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			    ("org" . "https://orgmode.org/elpa/")
+			    ("elpa" . "https://elpa.gnu.org/packages/")))
+
+    (package-initialize)
+    (unless package-archive-contents
     (package-refresh-contents))
 #+end_src
 ** Config General:
 - General is a package that helps create and redefine keybinds
   #+begin_src emacs-lisp :tangle yes
     (use-package general
+    :ensure t
       :config
       (general-create-definer rune/leader-keys
-        :keymaps '(normal insert visual emacs)
-        :prefix "SPC"
-        :global-prefix "C-SPC")
+	:keymaps '(normal insert visual emacs)
+	:prefix "SPC"
+	:global-prefix "C-SPC")
       (rune/leader-keys
-        "t" '(:ignore t :which-key "toggles")
-        ))
+	"t" '(:ignore t :which-key "toggles")
+	))
   #+end_src
 ** Config evil and the adjacent packages
 - Config evil and the adjacent packages:
@@ -220,7 +223,7 @@
             dashboard-set-file-icons t
             dashboard-banner-logo-title "WE’RE LEAN, WE’RE GREEN, AND WE’RE MEAN!"
             dashboard-items '((recents . 5))
-            dashboard-startup-banner "~/.emacs.d/assets/mezemacs_logo.png"
+            dashboard-startup-banner "~/.emacs.d/assets/mezemacs_logo_2.png"
             dashboard-image-banner-max-height 350)
       :init
       (add-hook 'dashboard-after-initialize-hook
@@ -257,9 +260,10 @@
 - Helps to find what keybind you trying to tap
   #+begin_src emacs-lisp :tangle yes
     (use-package which-key
+    :ensure t
       :commands (which-key-mode)
       :hook ((after-init . which-key-mode)
-             (pre-command . which-key-mode))
+	     (pre-command . which-key-mode))
       :config
       (setq which-key-idle-delay 1)
       :diminish which-key-mode)
@@ -268,22 +272,23 @@
 - ivy:
   - improve file and directory searcch in the mini-buffer.
     #+begin_src emacs-lisp :tangle yes
-    (use-package ivy
-        :diminish
-        :bind (:map ivy-minibuffer-map
-                    ("TAB" . ivy-alt-done)
-                    ("C-l" . ivy-alt-done)
-                    ("C-j" . ivy-next-line)
-                    ("C-k" . ivy-previous-line)
-                    :map ivy-switch-buffer-map
-                    ("C-k" . ivy-previous-line)
-                    ("C-l" . ivy-done)
-                    ("C-d" . ivy-switch-buffer-kill)
-                    :map ivy-reverse-i-search-map
-                    ("C-k" . ivy-previous-line)
-                    ("C-d" . ivy-reverse-i-search-kill))
-        :config
-        (ivy-mode 1))
+      (use-package ivy
+      :ensure t
+	  :diminish
+	  :bind (:map ivy-minibuffer-map
+		      ("TAB" . ivy-alt-done)
+		      ("C-l" . ivy-alt-done)
+		      ("C-j" . ivy-next-line)
+		      ("C-k" . ivy-previous-line)
+		      :map ivy-switch-buffer-map
+		      ("C-k" . ivy-previous-line)
+		      ("C-l" . ivy-done)
+		      ("C-d" . ivy-switch-buffer-kill)
+		      :map ivy-reverse-i-search-map
+		      ("C-k" . ivy-previous-line)
+		      ("C-d" . ivy-reverse-i-search-kill))
+	  :config
+	  (ivy-mode 1))
     #+end_src
 - Ivy rich:
   - Improve the ivy experience, enhance its aesthetics, and display additional information
@@ -296,21 +301,23 @@
   - Make the search in emacs even better. Counsel is make up on ivy
     #+begin_src emacs-lisp :tangle yes
       (use-package counsel
-        :bind (("C-x C-b" . 'counsel-switch-buffer)
-               :map minibuffer-local-map
-               ("C-r" . 'counsel-minibuffer-history))
-        :config
-        (counsel-mode 1))
+      :ensure t
+	:bind (("C-x C-b" . 'counsel-switch-buffer)
+	       :map minibuffer-local-map
+	       ("C-r" . 'counsel-minibuffer-history))
+	:config
+	(counsel-mode 1))
     #+end_src
 - ivy-perscient:
   - Enhance command suggestions and search based on you previous interactions
     #+begin_src emacs-lisp :tangle yes
       (use-package ivy-prescient
-        :after counsel
-        :custom
-        (ivy-prescient-enable-filtering nil)
-        :config
-        (ivy-prescient-mode 1))
+      :ensure t
+	:after counsel
+	:custom
+	(ivy-prescient-enable-filtering nil)
+	:config
+	(ivy-prescient-mode 1))
     #+end_src
 - ivy-posframe:
   - Floating ivy.
@@ -337,51 +344,57 @@
 ** Config Eshell
 - Eshell is the emacs shell, simulates shells like bash
 #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/eshell_config_2.el" :mkdirp yes
-    (defun efs/configure-eshell ()
-      ;; Save command history when commands are entered
-      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+      (defun efs/configure-eshell ()
+	;; Save command history when commands are entered
+	(add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-      ;; Truncate buffer for performance
-      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+	;; Truncate buffer for performance
+	(add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-      ;; Bind some useful keys for evil-mode
-      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-      (evil-normalize-keymaps)
+	;; Bind some useful keys for evil-mode
+	(evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+	(evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+	(evil-normalize-keymaps)
 
-      (setq eshell-history-size         10000
-            eshell-buffer-maximum-lines 10000
-            eshell-hist-ignoredups t
-            eshell-scroll-to-bottom-on-input t))
+	(setq eshell-history-size         10000
+	      eshell-buffer-maximum-lines 10000
+	      eshell-hist-ignoredups t
+	      eshell-scroll-to-bottom-on-input t))
 
-    (use-package eshell-git-prompt)
+      (use-package eshell-git-prompt
+  :ensure t)
 
-    (use-package eshell
-      :hook (eshell-first-time-mode . efs/configure-eshell)
-      :config
+      (use-package eshell
+  :ensure t
+	:hook (eshell-first-time-mode . efs/configure-eshell)
+	:config
 
-      (with-eval-after-load 'esh-opt
-        (setq eshell-destroy-buffer-when-process-dies t)
-        (setq eshell-visual-commands '("htop" "zsh" "vim")))
+	(with-eval-after-load 'esh-opt
+	  (setq eshell-destroy-buffer-when-process-dies t)
+	  (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-      (eshell-git-prompt-use-theme 'powerline))
+	(eshell-git-prompt-use-theme 'powerline))
 
-    (setq eshell-ls-use-ls-dired t)
-    (add-hook 'eshell-mode-hook
-              (lambda ()
-                (eshell-ls-register-ext-dir ".")
-                (define-key eshell-mode-map (kbd "C-l") 'eshell-clear-buffer)
-                (define-key eshell-mode-map (kbd "C-d") 'eshell-send-input)))
+      (setq eshell-ls-use-ls-dired t)
+      (add-hook 'eshell-mode-hook
+		(lambda ()
+		  (eshell-ls-register-ext-dir ".")
+		  (define-key eshell-mode-map (kbd "C-l") 'eshell-clear-buffer)
+		  (define-key eshell-mode-map (kbd "C-d") 'eshell-send-input)))
 
-  (defun my/set-eshell-foreground ()
-    (setq-local face-remapping-alist '((default (:foreground "white")))))
-  (add-hook 'eshell-mode-hook 'my/set-eshell-foreground)
+    (defun my/set-eshell-foreground ()
+      (setq-local face-remapping-alist '((default (:foreground "white")))))
+    (add-hook 'eshell-mode-hook 'my/set-eshell-foreground)
 
-    (add-hook 'eshell-mode-hook 'my/disable-line-numbers)
-(defun my/disable-line-numbers ()
-  (display-line-numbers-mode -1))
+      (add-hook 'eshell-mode-hook 'my/disable-line-numbers)
+  (defun my/disable-line-numbers ()
+    (display-line-numbers-mode -1))
 
 #+end_src
+
+#+RESULTS:
+: my/disable-line-numbers
+
 - Importing eshell to the main config
   #+begin_src emacs-lisp :tangle yes
     (defun my-eshell-config ()
@@ -393,24 +406,29 @@
 ** Config no-littering:
 - helps maintain an organized emacs directory. Temporary files and backups are saved in specific locations.
   #+begin_src emacs-lisp :tangle yes
-    (use-package no-littering)
+    (use-package no-littering
+    :ensure t)
     (setq auto-save-file-name-transforms
-          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   #+end_src
 ** Config Dired & adjacent packages:
 - Dired:
   - It is Emacs' mode for navigating and managing directories and files in the file system.
     #+begin_src emacs-lisp :tangle yes
       (use-package dired
-        :ensure nil
-        :commands (dired dired-jump)
-        :bind (("C-x C-j" . dired-jump))
-        :custom ((dired-listing-switches "-agho --group-directories-first"))
-        :config
-        (evil-collection-define-key 'normal 'dired-mode-map
-          "h" 'dired-single-up-directory
-          "g" 'dired-single-buffer))
+	:ensure nil
+	:commands (dired dired-jump)
+	:bind (("C-x C-j" . dired-jump))
+	:custom ((dired-listing-switches "-agho --group-directories-first"))
+	:config
+	(evil-collection-define-key 'normal 'dired-mode-map
+	  "h" 'dired-single-up-directory
+	  "g" 'dired-single-buffer))
     #+end_src
+
+    #+RESULTS:
+    : dired-jump
+
 - dired-single & dired-all-the-icons:
   - Enhances the functionality of the dired mode, allowing you to open directories in a single window, replacing the current buffer instead of opening a new window for each directory.
     #+begin_src emacs-lisp :tangle yes
@@ -419,20 +437,27 @@
       (use-package all-the-icons-dired
         :hook (dired-mode . all-the-icons-dired-mode))
     #+end_src
+
+    #+RESULTS:
+    | dired-hide-dotfiles-mode | dired-extra-startup | all-the-icons-dired-mode |
+
 - Dired-open & dired-hide-dotfiles:
   - Adds support for opening files directly from dired mode using external applications suitable for the file type.
     #+begin_src emacs-lisp :tangle yes
       (use-package dired-open
-        :config
-        (setq dired-open-extensions '(("png" . "feh")
-                                      ("mkv" . "mpv"))))
+	:config
+	(setq dired-open-extensions '(("png" . "feh")
+				      ("mkv" . "mpv"))))
 
       (use-package dired-hide-dotfiles
-        :hook (dired-mode . dired-hide-dotfiles-mode)
-        :config
-        (evil-collection-define-key 'normal 'dired-mode-map
-          "H" 'dired-hide-dotfiles-mode))
+	:hook (dired-mode . dired-hide-dotfiles-mode)
+	:config
+	(evil-collection-define-key 'normal 'dired-mode-map
+	  "H" 'dired-hide-dotfiles-mode))
     #+end_src
+
+    #+RESULTS:
+    | dired-hide-dotfiles-mode | dired-extra-startup | all-the-icons-dired-mode |
 
 ** Config Centered window & cursor:
 #+begin_src emacs-lisp :tangle yes
@@ -443,6 +468,7 @@
     (centered-window-mode t))
 
   (use-package centered-cursor-mode
+  :ensure t
     :demand
     :config
     (global-centered-cursor-mode))
@@ -452,31 +478,37 @@
   - All written or hexadecimal color codes are displayed in the corresponding color they represent.
     #+begin_src emacs-lisp :tangle yes
       (use-package rainbow-mode
-        :hook ((prog-mode . rainbow-mode)
-               (after-init . rainbow-mode))
-        :config
-        (setq rainbow-identfiers-choose-face-function 'rainbow-identifers-cie-l*a*b*-choose-face
-              rainbow-identifiers-cie-l*a*b*-lightness 45
-              rainbow-identifiers-cie-l*a*b*-saturation 70
-              rainbow-identifiers-rgb-face t))
+      :ensure t
+	:hook ((prog-mode . rainbow-mode)
+	       (after-init . rainbow-mode))
+	:config
+	(setq rainbow-identfiers-choose-face-function 'rainbow-identifers-cie-l*a*b*-choose-face
+	      rainbow-identifiers-cie-l*a*b*-lightness 45
+	      rainbow-identifiers-cie-l*a*b*-saturation 70
+	      rainbow-identifiers-rgb-face t))
     #+end_src
 - Rainbow delimiters:
   - Colors the [({})] symbols to make it easier to visualize the level you're at and which brackets you have opened and may have forgotten to close.
    #+begin_src emacs-lisp :tangle yes
-      (use-package rainbow-delimiters
-        :hook ((prog-mode . rainbow-delimiters-mode)
-               (org-mode . rainbow-delimiters-mode))
-        :custom-face
-        (rainbow-delimiters-depth-1-face ((t (:foreground "#ff2600"))))
-        (rainbow-delimiters-depth-2-face ((t (:foreground "#f0a000"))))
-        (rainbow-delimiters-depth-3-face ((t (:foreground "#ffdf00"))))
-        (rainbow-delimiters-depth-4-face ((t (:foreground "#40ff00"))))
-        (rainbow-delimiters-depth-5-face ((t (:foreground "#00f0a0"))))
-        (rainbow-delimiters-depth-6-face ((t (:foreground "#0080ff"))))
-        (rainbow-delimiters-depth-7-face ((t (:foreground "#bf00ff"))))
-        (rainbow-delimiters-depth-8-face ((t (:foreground "#ff00bf"))))
-        (rainbow-delimiters-depth-9-face ((t (:foreground "#ff0080")))))
+     (use-package rainbow-delimiters
+     :ensure t
+       :hook ((prog-mode . rainbow-delimiters-mode)
+	      (org-mode . rainbow-delimiters-mode))
+       :custom-face
+       (rainbow-delimiters-depth-1-face ((t (:foreground "#92c48f"))))
+       (rainbow-delimiters-depth-2-face ((t (:foreground "#f0a000"))))
+       (rainbow-delimiters-depth-3-face ((t (:foreground "#ffdf00"))))
+       (rainbow-delimiters-depth-4-face ((t (:foreground "#40ff00"))))
+       (rainbow-delimiters-depth-5-face ((t (:foreground "#00f0a0"))))
+       (rainbow-delimiters-depth-6-face ((t (:foreground "#0080ff"))))
+       (rainbow-delimiters-depth-7-face ((t (:foreground "#bf00ff"))))
+       (rainbow-delimiters-depth-8-face ((t (:foreground "#ff00bf"))))
+       (rainbow-delimiters-depth-9-face ((t (:foreground "#ff0080")))))
     #+end_src
+
+    #+RESULTS:
+    | (lambda nil (add-hook 'after-save-hook #'efs/org-babel-tangle-config)) | org-tempo-setup | org-bullets-mode | efs/org-mode-setup | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | my-disable-line-numbers | my-org-config | rainbow-delimiters-mode |
+
 ** Config Transparent emacs
 - Transparency configs:
   #+begin_src emacs-lisp :tangle "~/.emacs.d/configs/transparency_config_2.el" :mkdirp yes
@@ -552,11 +584,13 @@
       (visual-line-mode 1))
 
     (use-package org
+    :ensure t
       :hook (org-mode . efs/org-mode-setup)
       :config
       (setq org-ellipsis " ▾"))
 
     (use-package org-bullets
+    :ensure t
       :after org
       :hook (org-mode . org-bullets-mode)
       :custom
