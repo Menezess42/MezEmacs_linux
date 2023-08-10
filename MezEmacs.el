@@ -25,6 +25,10 @@
 (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 140)
 (set-face-attribute 'variable-pitch nil :font "FiraCode Nerd Font" :height 140)
 
+;; (set-face-attribute 'default nil :font "Hack Nerd Font" :height 140)
+;; (set-face-attribute 'fixed-pitch nil :font "Hack Nerd Font" :height 140)
+;; (set-face-attribute 'variable-pitch nil :font "Hack Nerd Font" :height 140)
+
 (load-file "~/.emacs.d/configs/tmnt_theme_color_2.el")
 
 ;; Initialize package sources
@@ -34,9 +38,15 @@
 			    ("org" . "https://orgmode.org/elpa/")
 			    ("elpa" . "https://elpa.gnu.org/packages/")))
 
+
+(dolist (package '(use-package))
+   (unless (package-installed-p package)
+       (package-install package)))
+
     (package-initialize)
     (unless package-archive-contents
     (package-refresh-contents))
+
 
 (use-package general
 :ensure t
@@ -105,14 +115,14 @@
   :config
   (company-quickhelp-mode 1))
 
-(defun my-disable-company-mode-in-python ()
-  "Desativa o Company Mode no modo Python."
-  (when (eq major-mode 'python-mode)
-    (company-mode -1))
-  (when (not (eq major-mode 'python-mode))
-    (company-mode 1)))
+;; (defun my-disable-company-mode-in-python ()
+;;   "Desativa o Company Mode no modo Python."
+;;   (when (eq major-mode 'python-mode)
+;;     (company-mode -1))
+;;   (when (not (eq major-mode 'python-mode))
+;;     (company-mode 1)))
 
-(add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
+;; (add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
 
 ;; (setq gc-cons-threshold most-positive-fixnum)
 ;; (add-hook 'emacs-startup-hook
@@ -224,6 +234,9 @@
     "h" 'dired-single-up-directory
     "g" 'dired-single-buffer))
 
+(use-package dired-icon
+  :ensure t)
+
 (use-package dired-single)
 
 (use-package all-the-icons-dired
@@ -314,14 +327,14 @@
           (not (name . "\\.DS_Store"))
           (not (name . "\\.pyc")))))
 
-(defun my-disable-company-mode-in-python ()
-  "Desativa o Company Mode no modo Python."
-  (when (eq major-mode 'python-mode)
-    (company-mode -1))
-  (when (not (eq major-mode 'python-mode))
-    (company-mode 1)))
+;; (defun my-disable-company-mode-in-python ()
+;;   "Desativa o Company Mode no modo Python."
+;;   (when (eq major-mode 'python-mode)
+;;     (company-mode -1))
+;;   (when (not (eq major-mode 'python-mode))
+;;     (company-mode 1)))
 
-(add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
+;; (add-hook 'after-change-major-mode-hook 'my-disable-company-mode-in-python)
 
 (defun my-python-config ()
   (setq pythonConfig-file "~/.emacs.d/configs/python_config.el")
