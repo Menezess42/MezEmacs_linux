@@ -60,6 +60,7 @@
     ))
 
 (use-package evil
+	     :ensure t
     :demand t
     :bind (("<escape>" . keyboard-escape-quit))
     :init
@@ -68,6 +69,7 @@
     (evil-mode 1))
 
 (use-package evil-collection
+	     :ensure t
 :after evil
 :config
 (setq evil-want-integration t)
@@ -204,6 +206,7 @@
 (ivy-posframe-mode 1)
 
 (use-package helpful
+	     :ensure t
   :custom
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
@@ -303,9 +306,12 @@
 (add-hook 'org-mode-hook #'my-org-config)
 
 ;; Doom modeline
-(use-package all-the-icons)
-(use-package nerd-icons)
+(use-package all-the-icons 
+	     :ensure t)
+(use-package nerd-icons
+	     :ensure t)
 (use-package doom-modeline
+	     :ensure t
 :init (doom-modeline-mode 1)
 :custom ((doom-modeline-height 15)))
 
