@@ -21,9 +21,9 @@
 
   (prefer-coding-system 'utf-8)
 
-(set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140)
-(set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 140)
-(set-face-attribute 'variable-pitch nil :font "FiraCode Nerd Font" :height 140)
+(set-face-attribute 'default nil :font "Unifont Regular" :height 140)
+(set-face-attribute 'fixed-pitch nil :font "Unifont Regular" :height 140)
+(set-face-attribute 'variable-pitch nil :font "Unifont Regular" :height 140)
 
 ;; (set-face-attribute 'default nil :font "Hack Nerd Font" :height 140)
 ;; (set-face-attribute 'fixed-pitch nil :font "Hack Nerd Font" :height 140)
@@ -237,17 +237,21 @@
 (use-package dired-icon
   :ensure t)
 
-(use-package dired-single)
+(use-package dired-single
+	     :ensre t)
 
 (use-package all-the-icons-dired
+	     :ensure t
   :hook (dired-mode . all-the-icons-dired-mode))
 
 (use-package dired-open
+	     :ensure t
   :config
   (setq dired-open-extensions '(("png" . "feh")
 				("mkv" . "mpv"))))
 
 (use-package dired-hide-dotfiles
+	     :ensure t
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
