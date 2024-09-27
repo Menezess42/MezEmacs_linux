@@ -362,18 +362,6 @@
   (load pythonConfig-file))
 (add-hook 'python-mode-hook #'my-python-config)
 
-(defun my-c-cpp-config ()
-  (setq c-cpp-config-file "~/.emacs.d/configs/c_config.el")
-  (load c-cpp-config-file))
-(add-hook 'c-mode-hook #'my-c-cpp-config)
-(add-hook 'c++-mode-hook #'my-c-cpp-config)
-
-(defun my-java-config ()
-  (setq java-config-file "~/.emacs.d/configs/java_config.el")
-  (load java-config-file))
-(add-hook 'java-mode-hook #'my-java-config)
-
-
 (defun my-disable-line-numbers ()
   "Disable line numbers."
   (display-line-numbers-mode 0))

@@ -6,7 +6,7 @@
         dashboard-set-file-icons t
         dashboard-banner-logo-title "WE’RE LEAN, WE’RE GREEN, AND WE’RE MEAN!"
         dashboard-items '((recents . 5))
-        dashboard-startup-banner "~/.emacs.d/assets/mezemacs_logo_2.png"
+        dashboard-startup-banner "~/.emacs.d/assets/Main_Dwarf_fortBg_round.png"
         dashboard-image-banner-max-height 350)
   :init
   (add-hook 'dashboard-after-initialize-hook
